@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -9,13 +10,21 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected successfully');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    process.exit(1); // Exit process with failure
+  }
+};
 
-// MongoDB Connection
-mongoose.connect(
-  "mongodb+srv://jaish786:Jaish786@cluster0.0ie4hum.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-);
-
+// Initialize connection
+connectDB();
 // Schema
 const eventSchema = new mongoose.Schema({
   eventId: { type: String, default: uuidv4 },
